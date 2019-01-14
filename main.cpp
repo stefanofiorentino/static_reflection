@@ -35,14 +35,14 @@ void doSetData(T &&object, const Json::Value &data)
     object.*(property.member) = data[property.name].asString();
 }
 
-template<std::size_t iteration, typename T, typename empty = std::enable_if_t<(iteration > 0)>>
+template<std::size_t iteration, typename T, std::enable_if_t<(iteration > 0)>* = nullptr>
 void setData(T &&object, const Json::Value &data)
 {
     doSetData<iteration>(object, data);
     setData<iteration - 1>(object, data);
 }
 
-template<std::size_t iteration, typename T, typename empty = std::enable_if_t<(iteration == 0)>>
+template<std::size_t iteration, typename T, std::enable_if_t<(iteration == 0)>* = nullptr>
 void setData(T &&object, const Json::Value &data)
 {
     doSetData<iteration>(object, data);
@@ -62,8 +62,9 @@ int main()
 {
     Json::Value value;
     value["username"] = "fiorentinoing";
-    value["info"] = "";
+    value["info"] = "https://www.linkedin.com/in/fiorentinoing/";
     User u = fromJson<User>(value);
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Hello, "<< u.username <<"!" << std::endl;
+    std::cout << "Please, visit "<< u.info <<"." << std::endl;
     return 0;
 }
