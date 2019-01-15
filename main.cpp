@@ -27,22 +27,28 @@ struct User
                                                        Property<User, std::string>{&User::info, "info"});
 };
 
+template< class T >
+using decay_t = typename std::decay<T>::type;
+
+template< bool B, class T = void >
+using enable_if_t = typename std::enable_if<B,T>::type;
+
 template<std::size_t iteration, typename T>
 void doSetData(T &&object, const Json::Value &data)
 {
-    constexpr auto property = std::get<iteration>(std::decay_t<T>::properties);
+    constexpr auto property = std::get<iteration>(decay_t<T>::properties);
     using Type = typename decltype(property)::Type;
     object.*(property.member) = data[property.name].asString();
 }
 
-template<std::size_t iteration, typename T, std::enable_if_t<(iteration > 0)>* = nullptr>
+template<std::size_t iteration, typename T, enable_if_t<(iteration > 0)>* = nullptr>
 void setData(T &&object, const Json::Value &data)
 {
     doSetData<iteration>(object, data);
     setData<iteration - 1>(object, data);
 }
 
-template<std::size_t iteration, typename T, std::enable_if_t<(iteration == 0)>* = nullptr>
+template<std::size_t iteration, typename T, enable_if_t<(iteration == 0)>* = nullptr>
 void setData(T &&object, const Json::Value &data)
 {
     doSetData<iteration>(object, data);
