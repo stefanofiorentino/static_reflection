@@ -18,13 +18,33 @@ struct Property
     const char *name;
 };
 
-struct User
+class User
 {
     std::string username;
     std::string info;
-
+public:
     constexpr static auto properties = std::make_tuple(Property<User, std::string>{&User::username, "username"},
                                                        Property<User, std::string>{&User::info, "info"});
+
+    const std::string &getUsername() const
+    {
+        return username;
+    }
+
+    void setUsername(const std::string &username)
+    {
+        User::username = username;
+    }
+
+    const std::string &getInfo() const
+    {
+        return info;
+    }
+
+    void setInfo(const std::string &info)
+    {
+        User::info = info;
+    }
 };
 
 template< class T >
@@ -70,7 +90,7 @@ int main()
     value["username"] = "fiorentinoing";
     value["info"] = "https://www.linkedin.com/in/fiorentinoing/";
     User u = fromJson<User>(value);
-    std::cout << "Hello, "<< u.username <<"!" << std::endl;
-    std::cout << "Please, visit "<< u.info <<"." << std::endl;
+    std::cout << "Hello, "<< u.getUsername() <<"!" << std::endl;
+    std::cout << "Please, visit "<< u.getInfo() <<"." << std::endl;
     return 0;
 }
